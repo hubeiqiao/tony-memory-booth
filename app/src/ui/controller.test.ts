@@ -173,9 +173,9 @@ describe("Controller (jsdom)", () => {
     await c.act("stop");
     await flush();
     expect(c.getState()).toBe("review"); // not forced back to ready
-    const note = root.querySelector('[data-ref="reviewnote"]');
+    const note = root.querySelector('[data-ref="reviewnote"]') as HTMLElement;
     expect(note.hidden).toBe(false);
-    expect(note.textContent.length).toBeGreaterThan(0);
+    expect((note.textContent ?? "").length).toBeGreaterThan(0);
   });
 
   it("clears contact PII on reset", async () => {
