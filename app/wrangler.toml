@@ -19,10 +19,10 @@ binding = "DB"
 database_name = "memory-booth"
 database_id = "fe6592ce-5806-4e1e-abd0-85ad86ba2a53"
 
-# Dev-only vars. In production set BOOTH_SECRET via `wrangler secret put`
-# and remove TURNSTILE_DISABLED (Turnstile is the phone gate).
+# Non-secret vars. Secrets (BOOTH_SECRET, ADMIN_SECRET, TURNSTILE_SECRET) are set
+# via `wrangler secret put` or the dashboard — never committed here.
+# Flip TURNSTILE_DISABLED to "0" once a Turnstile widget + secret are configured.
 [vars]
-BOOTH_SECRET = "dev-booth-secret-change-me"
 TURNSTILE_DISABLED = "1"
 MAX_BYTES = "157286400"
 MAX_DURATION_MS = "150000"

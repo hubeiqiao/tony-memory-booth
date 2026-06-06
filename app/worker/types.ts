@@ -44,6 +44,10 @@ export interface HandlerEnv {
   index: IndexLike;
   boothSecret: string;
   turnstileDisabled: boolean;
+  /** Server-side Turnstile verification (phone). Injected so tests stay offline. */
+  verifyTurnstile?: (token: string) => Promise<boolean>;
+  /** Stop-gap admin gate until Cloudflare Access is configured. */
+  adminSecret?: string;
   maxBytes: number;
   maxDurationMs: number;
   now?: () => number;

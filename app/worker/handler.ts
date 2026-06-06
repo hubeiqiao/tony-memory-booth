@@ -40,6 +40,22 @@ async function listReceivedParts(env: HandlerEnv, dir: string): Promise<number[]
     .sort((a, b) => a - b);
 }
 
+/**
+ * Admin/family endpoints are protected two ways (defence in depth):
+ *  - Cloudflare Access in front injects `cf-access-authenticated-user-email`.
+ *  - Until Access is configured, an ADMIN_SECRET (header or ?key=) gates entry.
+ * If neither is satisfied, deny.
+ */
+function adminAllowed(request: Request, env: HandlerEnv): boolean {
+  if (request.headers.get("cf-access-authenticated-user-email")) return true;
+  if (env.adminSecret) {
+    const key =
+      request.headers.get("x-admin-key") ?? new URL(request.url).searchParams.get("key");
+    if (key && key === env.adminSecret) return true;
+  }
+  return false;
+}
+
 export async function handleRequest(request: Request, env: HandlerEnv): Promise<Response> {
   const now = env.now?.() ?? Date.now();
   const url = new URL(request.url);
@@ -62,9 +78,11 @@ export async function handleRequest(request: Request, env: HandlerEnv): Promise<
         return json({ error: "unauthorized" }, 401);
       }
     } else {
-      // phone: Turnstile (stubbed locally via TURNSTILE_DISABLED)
-      if (!env.turnstileDisabled && !body?.turnstileToken) {
-        return json({ error: "challenge_required" }, 401);
+      // phone: verify Turnstile server-side (skipped only when explicitly disabled)
+      if (!env.turnstileDisabled) {
+        const token = body?.turnstileToken ?? "";
+        const ok = token && env.verifyTurnstile ? await env.verifyTurnstile(token) : false;
+        if (!ok) return json({ error: "challenge_required" }, 401);
       }
     }
     const token = await signToken(
@@ -232,6 +250,7 @@ export async function handleRequest(request: Request, env: HandlerEnv): Promise<
 
   // ---- admin: list (behind Cloudflare Access in prod) ----
   if (path === "/api/admin/recordings" && method === "GET") {
+    if (!adminAllowed(request, env)) return json({ error: "unauthorized" }, 401);
     const recordings = await env.index.list();
     return json({ recordings });
   }
@@ -239,6 +258,7 @@ export async function handleRequest(request: Request, env: HandlerEnv): Promise<
   // ---- admin: download (XSS-safe: never serve guest media inline) ----
   const dlMatch = path.match(/^\/api\/admin\/recordings\/([^/]+)\/download$/);
   if (dlMatch && method === "GET") {
+    if (!adminAllowed(request, env)) return json({ error: "unauthorized" }, 401);
     const row = await env.index.get(dlMatch[1]);
     if (!row) return json({ error: "not found" }, 404);
     const obj = await env.bucket.get(row.key);

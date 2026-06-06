@@ -12,9 +12,24 @@ export interface Env {
   DB: D1Database;
   ASSETS: Fetcher;
   BOOTH_SECRET: string;
+  ADMIN_SECRET?: string;
+  TURNSTILE_SECRET?: string;
   TURNSTILE_DISABLED?: string;
   MAX_BYTES?: string;
   MAX_DURATION_MS?: string;
+}
+
+async function verifyTurnstile(token: string, secret?: string): Promise<boolean> {
+  if (!secret) return false;
+  const form = new FormData();
+  form.append("secret", secret);
+  form.append("response", token);
+  const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+    method: "POST",
+    body: form,
+  });
+  const data = (await res.json().catch(() => null)) as { success?: boolean } | null;
+  return data?.success === true;
 }
 
 const SCHEMA = `CREATE TABLE IF NOT EXISTS recordings (
@@ -104,6 +119,8 @@ export default {
       index: d1Index(env.DB),
       boothSecret: env.BOOTH_SECRET,
       turnstileDisabled: env.TURNSTILE_DISABLED === "1",
+      verifyTurnstile: (token: string) => verifyTurnstile(token, env.TURNSTILE_SECRET),
+      adminSecret: env.ADMIN_SECRET,
       maxBytes: Number(env.MAX_BYTES ?? 157286400),
       maxDurationMs: Number(env.MAX_DURATION_MS ?? 150000),
       assets: env.ASSETS,

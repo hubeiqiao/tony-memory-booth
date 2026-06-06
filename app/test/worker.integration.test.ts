@@ -22,6 +22,7 @@ beforeEach(() => {
     index,
     boothSecret: SECRET,
     turnstileDisabled: true,
+    adminSecret: "admin-test-key",
     maxBytes: CONFIG.maxBytes,
     maxDurationMs: CONFIG.maxDurationMs,
     now: () => 1_700_000_000_000,
@@ -199,7 +200,7 @@ describe("worker handler", () => {
   it("admin download is XSS-safe (attachment + nosniff + octet-stream)", async () => {
     const t = await token();
     await uploadRecording(crypto.getRandomValues(new Uint8Array(8)), t);
-    const r = await handleRequest(req(`/api/admin/recordings/${ID}/download`), env);
+    const r = await handleRequest(req(`/api/admin/recordings/${ID}/download`, { headers: { "x-admin-key": "admin-test-key" } }), env);
     expect(r.status).toBe(200);
     expect(r.headers.get("content-type")).toBe("application/octet-stream");
     expect(r.headers.get("content-disposition")).toContain("attachment");
@@ -209,7 +210,7 @@ describe("worker handler", () => {
   it("admin list returns recordings", async () => {
     const t = await token();
     await uploadRecording(crypto.getRandomValues(new Uint8Array(8)), t);
-    const r = await handleRequest(req("/api/admin/recordings"), env);
+    const r = await handleRequest(req("/api/admin/recordings", { headers: { "x-admin-key": "admin-test-key" } }), env);
     const body = (await r.json()) as { recordings: { id: string }[] };
     expect(body.recordings.map((x) => x.id)).toContain(ID);
   });
@@ -236,5 +237,38 @@ describe("worker handler", () => {
       env
     );
     expect(r.status).toBe(415);
+  });
+
+  it("admin endpoints require auth (Access header or admin key)", async () => {
+    const noKey = await handleRequest(req("/api/admin/recordings"), env);
+    expect(noKey.status).toBe(401);
+
+    const viaAccess = await handleRequest(
+      req("/api/admin/recordings", { headers: { "cf-access-authenticated-user-email": "family@example.com" } }),
+      env
+    );
+    expect(viaAccess.status).toBe(200);
+
+    const wrongKey = await handleRequest(
+      req("/api/admin/recordings", { headers: { "x-admin-key": "nope" } }),
+      env
+    );
+    expect(wrongKey.status).toBe(401);
+  });
+
+  it("phone Turnstile: rejects when verification fails, allows when it passes", async () => {
+    const fail = { ...env, turnstileDisabled: false, verifyTurnstile: async () => false };
+    const r1 = await handleRequest(
+      req("/api/upload-token", { method: "POST", body: JSON.stringify({ mode: "phone", turnstileToken: "x" }) }),
+      fail
+    );
+    expect(r1.status).toBe(401);
+
+    const pass = { ...env, turnstileDisabled: false, verifyTurnstile: async () => true };
+    const r2 = await handleRequest(
+      req("/api/upload-token", { method: "POST", body: JSON.stringify({ mode: "phone", turnstileToken: "good" }) }),
+      pass
+    );
+    expect(r2.status).toBe(200);
   });
 });

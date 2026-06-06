@@ -11,6 +11,25 @@ Companion to `Implementation-Plan.md` (the build) and `Memory-Booth-Plan.md`
 
 ---
 
+## Update (build) — aligned to the memorial site
+
+The shipped app intentionally adopts the **existing memorial site's** visual
+language (`site/`, tony.hubeiqiao.com) for cohesion, which supersedes the
+"candlelight/bronze" specifics below:
+
+- **Type:** **Newsreader** (serif display) + **Instrument Sans** (UI), self-hosted.
+- **Palette:** near-black `#0a0a0b`, warm ivory `#f0ebe1`, soft `#8c857b`, a single
+  **red** accent `#d33c3c` (the site's accent), neutral page glow.
+- **Photos:** **grayscale by default**, blooming to colour on hover — the site's
+  signature treatment. Tony's portrait is a head-and-shoulders crop.
+- Everything else below (calm symmetry, breath-like motion, generous space,
+  reverent copy, accessibility, offline self-hosted assets) still holds.
+
+The sections that follow are the original direction and are kept for rationale;
+where they say bronze/Fraunces/Hanken, read red/Newsreader/Instrument Sans.
+
+---
+
 ## 0. The concept: "A warm, candlelit room"
 
 The whole experience should feel like being quietly invited into a calm, warm
