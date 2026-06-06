@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>A Memory Booth for Tony — Rough Plan &amp; Wireframe</title>
+<style>
+  @page {
+    size: Letter;
+    margin: 1in 1in 0.9in 1in;
+  }
+
+  :root {
+    --ink: #2b2925;
+    --soft: #544f47;
+    --muted: #8b8377;
+    --accent: #9c7a45;
+    --accent-deep: #6d5430;
+    --rule: #e7dfd0;
+    --tint: #f7f2e9;
+    --wire-bg: #faf6ef;
+    --wire-border: #e6dcc9;
+    --wire-ink: #4a4439;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  body {
+    margin: 0;
+    color: var(--ink);
+    font-family: "Avenir Next", "Avenir", "Helvetica Neue", -apple-system, system-ui, sans-serif;
+    font-size: 11.25pt;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .page { max-width: 100%; }
+
+  p { margin: 0 0 0.85em; }
+
+  strong { color: var(--ink); font-weight: 650; }
+  em { color: var(--soft); }
+
+  a { color: var(--accent-deep); text-decoration: none; }
+
+  /* ---------- Cover ---------- */
+  .cover {
+    padding: 0.2in 0 0.42in;
+    margin-bottom: 0.45in;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .kicker {
+    font-size: 8.5pt;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 650;
+    margin-bottom: 0.28in;
+  }
+
+  .cover-title {
+    font-family: "Hoefler Text", "Baskerville", "Palatino", Georgia, serif;
+    font-weight: 600;
+    font-size: 35pt;
+    line-height: 1.06;
+    letter-spacing: -0.01em;
+    margin: 0 0 0.12in;
+    color: var(--ink);
+  }
+
+  .cover-sub {
+    font-family: "Hoefler Text", "Baskerville", "Palatino", Georgia, serif;
+    font-style: italic;
+    font-size: 14.5pt;
+    color: var(--accent-deep);
+    margin: 0 0 0.26in;
+  }
+
+  .cover-rule {
+    width: 56px;
+    height: 2px;
+    background: var(--accent);
+    margin: 0 0 0.26in;
+  }
+
+  .lede {
+    font-size: 12.5pt;
+    line-height: 1.6;
+    color: var(--soft);
+    max-width: 6in;
+    margin-bottom: 0.18in;
+  }
+
+  .draft-note {
+    font-style: italic;
+    color: var(--muted);
+    font-size: 10.5pt;
+    margin: 0;
+  }
+
+  /* ---------- Sections ---------- */
+  section { margin: 0 0 0.34in; }
+
+  .sec-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.16in;
+    padding-bottom: 0.07in;
+    margin-bottom: 0.16in;
+    border-bottom: 1px solid var(--rule);
+    break-after: avoid;
+  }
+
+  .sec-num {
+    flex: none;
+    font-family: "Hoefler Text", "Baskerville", Georgia, serif;
+    font-size: 13pt;
+    font-weight: 600;
+    color: #fff;
+    background: var(--accent);
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transform: translateY(2px);
+  }
+
+  .sec-head h2 {
+    font-family: "Hoefler Text", "Baskerville", "Palatino", Georgia, serif;
+    font-weight: 600;
+    font-size: 17pt;
+    letter-spacing: -0.01em;
+    margin: 0;
+    color: var(--ink);
+  }
+
+  h2, h3 { break-after: avoid; }
+
+  ol, ul { margin: 0 0 0.85em; padding-left: 1.35em; }
+  li { margin-bottom: 0.4em; }
+  li::marker { color: var(--accent); }
+
+  /* ---------- Wireframes ---------- */
+  .wire {
+    margin: 0 0 0.22in;
+    break-inside: avoid;
+  }
+
+  .wire figcaption {
+    font-size: 9pt;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 650;
+    color: var(--accent-deep);
+    margin-bottom: 0.07in;
+  }
+
+  .wire pre {
+    margin: 0;
+    background: var(--wire-bg);
+    border: 1px solid var(--wire-border);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 14px 16px;
+    color: var(--wire-ink);
+    font-family: "SF Mono", "Menlo", "Monaco", "Consolas", monospace;
+    font-size: 8.6pt;
+    line-height: 1.4;
+    white-space: pre;
+    overflow: hidden;
+  }
+
+  /* ---------- Tables ---------- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.05in 0 0.95em;
+    font-size: 10.5pt;
+    break-inside: avoid;
+  }
+
+  thead th {
+    background: var(--tint);
+    color: var(--accent-deep);
+    text-align: left;
+    font-weight: 650;
+    font-size: 9.5pt;
+    letter-spacing: 0.04em;
+    padding: 8px 11px;
+    border-bottom: 2px solid var(--accent);
+  }
+
+  tbody td {
+    padding: 8px 11px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+    color: var(--soft);
+  }
+
+  tbody td:first-child { color: var(--ink); font-weight: 600; white-space: nowrap; }
+  tbody tr:last-child td { border-bottom: none; }
+  tr { break-inside: avoid; }
+
+  /* ---------- Closing ---------- */
+  .closing-note {
+    margin-top: 0.3in;
+    padding-top: 0.16in;
+    border-top: 1px solid var(--rule);
+    font-style: italic;
+    color: var(--muted);
+    font-size: 9.5pt;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="cover">
+    <div class="kicker">Proposal · A Gift for the Family</div>
+    <h1 class="cover-title">A Memory Booth for Tony</h1>
+    <p class="cover-sub">For the Celebration of Life · June 21</p>
+    <div class="cover-rule"></div>
+    <p class="lede">A simple, warm way for guests to record a short video message or memory for the family. One web app powers everything: it runs on a laptop as a quiet “booth,” it opens on phones via a QR code, and it stays online afterward so anyone who couldn’t attend can still share something.</p>
+    <p class="draft-note">This builds on Eduardo’s idea for a recording booth at the celebration of life. It’s a first draft to react to — nothing here is locked in.</p>
+  </header>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">1</span><h2>The idea in one paragraph</h2></div>
+    <p>We set up a small, comfortable spot at the event. A guest sits down, taps one big button, and the camera gives them about 60–120 seconds to speak — a memory, a thank-you, a story about Tony. They tap again to finish. The message is saved safely for the family, and the screen resets for the next person. The exact same app also works on phones, so people who’d rather record on their own — or do it later from home — can scan a QR code and share that way.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">2</span><h2>What a guest experiences</h2></div>
+    <ol>
+      <li>They see a welcome screen with Tony’s photo and a single <strong>Start</strong> button.</li>
+      <li>A gentle <strong>3 · 2 · 1</strong> countdown gives them a moment to settle.</li>
+      <li>Recording begins. A timer counts down; the button now says <strong>Stop</strong>.</li>
+      <li>When they finish (or time runs out), they can <strong>watch it back</strong> and choose <strong>Keep &amp; Send</strong> or <strong>Re-record</strong>.</li>
+      <li>They can <strong>optionally leave their name and a way to reach them</strong>, in case the family would like to follow up with a thank-you — easy to skip.</li>
+      <li>A <strong>thank-you</strong> screen appears, then the booth resets for the next guest.</li>
+    </ol>
+    <p>No accounts, no typing, no setup. The whole thing is one tap to start, one to stop.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">3</span><h2>Wireframes</h2></div>
+
+    <figure class="wire">
+      <figcaption>Screen 1 — Welcome / Start</figcaption>
+      <pre>+--------------------------------------------+
+|                                            |
+|            [ Photo of Tony ]               |
+|                                            |
+|      Share a memory of Tony Bailetti       |
+|                                            |
+|    Record a short message for his family   |
+|                                            |
+|        +----------------------------+      |
+|        |    &#9679;   Start Recording     |      |
+|        +----------------------------+      |
+|                                            |
+|   Your message goes only to Tony's family  |
+|              About 60-120 seconds          |
++--------------------------------------------+</pre>
+    </figure>
+
+    <figure class="wire">
+      <figcaption>Screen 2 — Countdown</figcaption>
+      <pre>+--------------------------------------------+
+|                                            |
+|          [ live camera preview ]           |
+|                                            |
+|                                            |
+|                   3                        |
+|                                            |
+|               Get ready...                 |
+|                                            |
++--------------------------------------------+</pre>
+    </figure>
+
+    <figure class="wire">
+      <figcaption>Screen 3 — Recording</figcaption>
+      <pre>+--------------------------------------------+
+|  &#9679; REC                            01:12    |
+|                                            |
+|          [ live camera preview ]           |
+|                                            |
+|                                            |
+|        +----------------------------+      |
+|        |       &#9632;   Stop &amp; Save      |      |
+|        +----------------------------+      |
+|                                            |
+|     Take your time. Speak from the heart.  |
++--------------------------------------------+</pre>
+    </figure>
+
+    <figure class="wire">
+      <figcaption>Screen 4 — Review (keep or try again)</figcaption>
+      <pre>+--------------------------------------------+
+|             Here's your message            |
+|                                            |
+|            [ video playback &#9654; ]            |
+|                                            |
+|    +---------------+   +----------------+  |
+|    |   Re-record   |   |  Keep &amp; Send &#10003; |  |
+|    +---------------+   +----------------+  |
+|                                            |
++--------------------------------------------+</pre>
+    </figure>
+
+    <figure class="wire">
+      <figcaption>Screen 5 — Leave your details (optional)</figcaption>
+      <pre>+--------------------------------------------+
+|                                            |
+|       Want the family to be able to        |
+|        reach you to say thank you?         |
+|                 (optional)                 |
+|                                            |
+|   Name   [_______________________]         |
+|   Email  [_______________________]         |
+|   Phone  [_______________________]         |
+|                                            |
+|     +-----------+   +---------------+      |
+|     |   Skip    |   |  Save &amp; Done  |      |
+|     +-----------+   +---------------+      |
+|                                            |
++--------------------------------------------+</pre>
+    </figure>
+
+    <figure class="wire">
+      <figcaption>Screen 6 — Thank you / Saved</figcaption>
+      <pre>+--------------------------------------------+
+|                                            |
+|                    &#10003;                       |
+|                                            |
+|           Thank you for sharing.           |
+|                                            |
+|     Your message has been saved for        |
+|              Tony's family.                |
+|                                            |
+|         (resets for the next guest)        |
++--------------------------------------------+</pre>
+    </figure>
+
+    <figure class="wire">
+      <figcaption>The booth itself (physical setup)</figcaption>
+      <pre>        A quiet corner / semi-private space
+   +------------------------------------------+
+   |   [ ring light ]                         |
+   |        webcam [#]                        |
+   |     +------------------+                 |
+   |     |   Laptop /       |     ( mic )     |
+   |     |   big screen     |                 |
+   |     +------------------+                 |
+   |            [ chair ]                     |
+   |                                          |
+   |    "Sit down, tap the button, share."    |
+   +------------------------------------------+</pre>
+    </figure>
+
+    <figure class="wire">
+      <figcaption>QR card (phones / around the room / after the event)</figcaption>
+      <pre>        +------------------------------+
+        |    Share a memory of         |
+        |       Tony Bailetti          |
+        |                              |
+        |        [  QR CODE  ]         |
+        |                              |
+        |   Scan to record a message   |
+        |       for the family         |
+        +------------------------------+</pre>
+    </figure>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">4</span><h2>Three ways people can use the same app</h2></div>
+    <table>
+      <thead>
+        <tr><th>Way</th><th>Where</th><th>Best for</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Booth</td>
+          <td>A laptop + webcam + mic in a quiet corner</td>
+          <td>The main experience — best audio/video, a calm private moment, easy for guests who aren’t comfortable with phones</td>
+        </tr>
+        <tr>
+          <td>QR on phones</td>
+          <td>Cards / posters around the venue</td>
+          <td>Many people at once with no line; people who’d rather record themselves</td>
+        </tr>
+        <tr>
+          <td>After the event</td>
+          <td>A shared link</td>
+          <td>Anyone who couldn’t attend, or who wants to think about what to say</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>The booth is the centerpiece. The QR and after-event link cost us almost nothing extra to offer, and they make sure no one who wants to contribute gets left out.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">5</span><h2>Making sure nothing is ever lost</h2></div>
+    <p>This only happens once, so the most important promise is: <strong>we never lose a message.</strong> The plan is built around that:</p>
+    <ul>
+      <li>The booth <strong>saves each recording the instant it’s finished</strong>, before anything else, so a weak venue Wi-Fi connection can’t cause a loss.</li>
+      <li>Saved recordings then upload to private cloud storage in the background.</li>
+      <li>At the end of the night we also keep a copy on a USB drive as a backup.</li>
+      <li>Every guest sees a clear “&#10003; saved” confirmation so no one is left wondering.</li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">6</span><h2>The website can hold more than recordings</h2></div>
+    <p>Since we’re building a site anyway, it can quietly grow into a small place that holds more of Tony — the photos and videos we already have, and the messages people record. If the family likes the idea, the recorded memories could later become part of a lasting online tribute that lives at the same address.</p>
+    <figure class="wire">
+      <figcaption>A possible later layout — entirely optional, not needed for June 21</figcaption>
+      <pre>+--------------------------------------------+
+|   tonybailetti.com                         |
+|--------------------------------------------|
+|             [ hero photo of Tony ]         |
+|           Remembering Tony Bailetti        |
+|                                            |
+|         [  Share a Memory  ]   &lt;- record   |
+|--------------------------------------------|
+|   His Story   |   Photos   |   Videos      |
+|--------------------------------------------|
+|   [ wall of messages - family-only ]       |
++--------------------------------------------+</pre>
+    </figure>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">7</span><h2>Domain &amp; hosting</h2></div>
+    <p><strong>Suggested domain: <code>tonybailetti.com</code> — it’s available now.</strong> It’s clean, it’s his name, and it can hold both the memory booth now and a fuller tribute later. <em>Suggestion: Eduardo purchases and owns the domain</em> (roughly ~$10–12/year at most registrars — worth confirming at checkout). Joe is happy to help with the technical setup.</p>
+    <p><strong>Hosting: Cloudflare.</strong> It’s a great fit for this and keeps everything in one place:</p>
+    <ul>
+      <li><strong>Cloudflare Pages / Workers</strong> — serves the recording web app.</li>
+      <li><strong>Cloudflare R2</strong> — private storage for the video messages (no surprise egress fees, well-suited to media files). <em>(Check Cloudflare’s current R2 pricing for exact numbers; volume here will be small.)</em></li>
+      <li><strong>Cloudflare Access</strong> — optional, to lock the “view all messages” page so only the family can see it.</li>
+    </ul>
+    <p>Everything lives in one Cloudflare account that Joe can help configure.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">8</span><h2>A few things to decide together</h2></div>
+    <ul>
+      <li><strong>Who can see the messages?</strong> Default plan: private to the family only.</li>
+      <li>A short, gentle <strong>consent line</strong> on screen (e.g. “Your message will be shared with Tony’s family”) — good to agree on the exact wording.</li>
+      <li><strong>Contact details are optional</strong> and kept private — collected only so the family can reach out to say thank you, and never shared further.</li>
+      <li>Rough <strong>number of guests</strong>, so we can plan booth capacity / whether to add a second station.</li>
+      <li>Is there a <strong>quiet corner</strong> at the venue we can use for the booth?</li>
+      <li><strong>Hardware:</strong> one good external webcam + a clip-on or USB mic makes a big difference over a laptop’s built-in mic. We can sort out what to borrow / bring.</li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">9</span><h2>Rough timeline (today → June 21)</h2></div>
+    <table>
+      <thead>
+        <tr><th>When</th><th>What</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>This week</td><td>Confirm the idea, buy <code>tonybailetti.com</code>, agree on privacy + consent wording</td></tr>
+        <tr><td>~1 week out</td><td>Build the recording app, set up Cloudflare storage, test on real iPhones &amp; Androids</td></tr>
+        <tr><td>Few days out</td><td>Dry run with the actual booth laptop + webcam + mic; print QR cards</td></tr>
+        <tr><td>June 21</td><td>Set up the booth, keep the QR link live, collect messages</td></tr>
+        <tr><td>After</td><td>Hand the family all recordings; optionally fold them into a lasting tribute</td></tr>
+      </tbody>
+    </table>
+    <p>There’s comfortably enough time. The build itself is small; most of the care goes into testing and reliability.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">10</span><h2>Next steps</h2></div>
+    <ol>
+      <li>Get a thumbs-up (or changes) on this rough plan.</li>
+      <li><strong>Eduardo:</strong> purchase and own <code>tonybailetti.com</code>, and share any photos or videos of Tony he has, if available.</li>
+      <li><strong>The rest of the team:</strong> build and test the recording app on real phones.</li>
+      <li>Dry run the full booth before the day.</li>
+    </ol>
+    <p>If this feels right, we’ll start on a working prototype so you can try it yourself well before the 21st.</p>
+  </section>
+
+  <p class="closing-note">A first draft, shared with care. Everything here is open to change.</p>
+
+</div>
+</body>
+</html>
