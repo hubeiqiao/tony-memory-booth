@@ -119,6 +119,9 @@ export class Controller {
         case "start":
           await this.beginRecording();
           break;
+        case "back":
+          this.reset(); // release the camera and return to welcome
+          break;
         case "stop":
           await this.finishRecording();
           break;

@@ -158,6 +158,19 @@ describe("Controller (jsdom)", () => {
     expect(c.getState()).toBe("thankyou");
   });
 
+  it("Back from the Ready screen returns to welcome and releases the camera", async () => {
+    const root = mount();
+    const f = fakes("phone");
+    const c = new Controller(root, f.deps);
+    await c.act("begin");
+    await c.act("allow");
+    await flush();
+    expect(c.getState()).toBe("ready");
+    await c.act("back");
+    expect(c.getState()).toBe("idle");
+    expect(f.capture.teardown).toHaveBeenCalled();
+  });
+
   it("poor-quality recording is NOT blocked — shows review with a gentle note", async () => {
     const root = mount();
     const f = fakes("booth");

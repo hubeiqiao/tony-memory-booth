@@ -65,7 +65,10 @@ export function buildStage(root: HTMLElement, mode: Mode): ScreenRefs {
         `<div class="preview-frame"><video data-ref="preview" muted playsinline></video></div>
          <p class="lead">When you're ready.</p>
          <p class="subtle">If you're not sure where to start — how you met him, a moment he believed in you, or something he taught you that stayed.</p>
-         <div class="controls"><button class="btn btn--primary btn--lg" data-action="start">Start recording</button></div>
+         <div class="controls">
+           <button class="btn" data-action="back">Back</button>
+           <button class="btn btn--primary" data-action="start">Start recording</button>
+         </div>
          <div class="level" aria-hidden="true"><i data-ref="level"></i></div>`
       )}
       ${section(
