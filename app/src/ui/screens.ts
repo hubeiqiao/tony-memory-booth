@@ -11,7 +11,6 @@ export interface ScreenRefs {
   previewVideo: HTMLVideoElement;
   recPreview: HTMLVideoElement;
   reviewVideo: HTMLVideoElement;
-  countdownNum: HTMLElement;
   timer: HTMLElement;
   reviewNote: HTMLElement;
   levelFill: HTMLElement;
@@ -26,7 +25,6 @@ export const SCREEN_FOR: Record<State, string> = {
   idle: "welcome",
   permission: "permission",
   ready: "ready",
-  countdown: "countdown",
   recording: "recording",
   check: "check",
   review: "review",
@@ -69,11 +67,6 @@ export function buildStage(root: HTMLElement, mode: Mode): ScreenRefs {
          <p class="subtle">If you're not sure where to start — how you met him, a moment he believed in you, or something he taught you that stayed.</p>
          <div class="controls"><button class="btn btn--primary btn--lg" data-action="start">Start recording</button></div>
          <div class="level" aria-hidden="true"><i data-ref="level"></i></div>`
-      )}
-      ${section(
-        "countdown",
-        `<div class="countdown"><span class="ring"></span><span class="num" data-ref="count">3</span></div>
-         <p class="lead">Gather your thoughts.</p>`
       )}
       ${section(
         "recording",
@@ -155,7 +148,6 @@ export function buildStage(root: HTMLElement, mode: Mode): ScreenRefs {
     previewVideo: ref<HTMLVideoElement>("preview"),
     recPreview: ref<HTMLVideoElement>("recpreview"),
     reviewVideo: ref<HTMLVideoElement>("review"),
-    countdownNum: ref("count"),
     timer: ref("timer"),
     reviewNote: ref("reviewnote"),
     levelFill: ref("level"),

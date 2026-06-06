@@ -11,7 +11,6 @@ describe("state machine", () => {
       "BEGIN",
       "PERMISSION_GRANTED",
       "START",
-      "COUNTDOWN_DONE",
       "STOP",
       "CHECK_PASS",
       "KEEP",
@@ -29,7 +28,7 @@ describe("state machine", () => {
   });
 
   it("sanity check failure returns to ready to re-record", () => {
-    const s = run(["BEGIN", "PERMISSION_GRANTED", "START", "COUNTDOWN_DONE", "STOP"]);
+    const s = run(["BEGIN", "PERMISSION_GRANTED", "START", "STOP"]);
     expect(s).toBe("check");
     expect(transition(s, "CHECK_FAIL")).toBe("ready");
   });
@@ -39,7 +38,6 @@ describe("state machine", () => {
       "BEGIN",
       "PERMISSION_GRANTED",
       "START",
-      "COUNTDOWN_DONE",
       "STOP",
       "CHECK_PASS",
     ]);
@@ -52,7 +50,6 @@ describe("state machine", () => {
       "BEGIN",
       "PERMISSION_GRANTED",
       "START",
-      "COUNTDOWN_DONE",
       "STOP",
       "CHECK_PASS",
       "KEEP",
@@ -60,12 +57,6 @@ describe("state machine", () => {
     ]);
     expect(s).toBe("saving");
     expect(transition(s, "SAVE_FAILED")).toBe("error");
-  });
-
-  it("countdown can be cancelled back to ready", () => {
-    const s = run(["BEGIN", "PERMISSION_GRANTED", "START"]);
-    expect(s).toBe("countdown");
-    expect(transition(s, "CANCEL")).toBe("ready");
   });
 
   it("RESET from any state returns to idle (attendant reset)", () => {

@@ -11,7 +11,6 @@ export type State =
   | "idle"
   | "permission"
   | "ready"
-  | "countdown"
   | "recording"
   | "check"
   | "review"
@@ -26,8 +25,6 @@ export type EventType =
   | "PERMISSION_GRANTED"
   | "PERMISSION_DENIED"
   | "START"
-  | "CANCEL"
-  | "COUNTDOWN_DONE"
   | "STOP"
   | "CHECK_PASS"
   | "CHECK_FAIL"
@@ -44,8 +41,7 @@ export const INITIAL: State = "idle";
 const TABLE: Record<State, Partial<Record<EventType, State>>> = {
   idle: { BEGIN: "permission" },
   permission: { PERMISSION_GRANTED: "ready", PERMISSION_DENIED: "denied" },
-  ready: { START: "countdown" },
-  countdown: { COUNTDOWN_DONE: "recording", CANCEL: "ready" },
+  ready: { START: "recording" },
   // tab-hidden / cap reached / manual stop all funnel through STOP
   recording: { STOP: "check" },
   check: { CHECK_PASS: "review", CHECK_FAIL: "ready" },

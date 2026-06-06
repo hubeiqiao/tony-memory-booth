@@ -80,11 +80,8 @@ function activeScreen(root: HTMLElement): string | undefined {
   return root.querySelector(".screen.is-active")?.getAttribute("data-screen") ?? undefined;
 }
 
-async function toRecording(c: Controller, sch: ReturnType<typeof makeScheduler>) {
-  await c.act("start"); // -> countdown, schedules first tick
-  sch.runAfters(); // 3 -> 2
-  sch.runAfters(); // 2 -> 1
-  sch.runAfters(); // 1 -> 0 -> beginRecording()
+async function toRecording(c: Controller, _sch: ReturnType<typeof makeScheduler>) {
+  await c.act("start"); // begins recording immediately (no countdown)
   await flush();
 }
 

@@ -117,7 +117,7 @@ export class Controller {
           await this.requestPermission();
           break;
         case "start":
-          await this.startCountdown();
+          await this.beginRecording();
           break;
         case "stop":
           await this.finishRecording();
@@ -160,22 +160,6 @@ export class Controller {
     await this.deps.capture.startPreview(this.refs.previewVideo);
   }
 
-  private async startCountdown(): Promise<void> {
-    this.dispatch("START");
-    let n = CONFIG.countdownFrom;
-    this.refs.countdownNum.textContent = String(n);
-    const tick = () => {
-      n -= 1;
-      if (n > 0) {
-        this.refs.countdownNum.textContent = String(n);
-        this.deps.scheduler.after(1000, tick);
-      } else {
-        void this.beginRecording();
-      }
-    };
-    this.deps.scheduler.after(1000, tick);
-  }
-
   private async beginRecording(): Promise<void> {
     this.cur = this.freshCurrent();
     await this.deps.buffer.begin(this.cur.id, this.cur.createdAt);
@@ -183,7 +167,7 @@ export class Controller {
       void this.deps.buffer.append(this.cur.id, seq, blob);
     });
     this.deps.capture.showLive(this.refs.recPreview); // live preview on the recording screen
-    this.dispatch("COUNTDOWN_DONE");
+    this.dispatch("START"); // ready → recording (no countdown; Start is the deliberate action)
     const startedAt = this.deps.now();
     this.cancelTick = this.deps.scheduler.every(250, () => {
       const elapsed = this.deps.now() - startedAt;
