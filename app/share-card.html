@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Memory Booth — share card</title>
+    <style>
+      @font-face {
+        font-family: "Newsreader";
+        font-weight: 600;
+        font-display: block;
+        src: url("/fonts/newsreader-600-latin.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Newsreader";
+        font-weight: 400;
+        font-display: block;
+        src: url("/fonts/newsreader-400-latin.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Instrument Sans";
+        font-weight: 400;
+        font-display: block;
+        src: url("/fonts/instrument-400-latin.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Instrument Sans";
+        font-weight: 600;
+        font-display: block;
+        src: url("/fonts/instrument-600-latin.woff2") format("woff2");
+      }
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0; width: 1200px; height: 630px; overflow: hidden;
+        background:
+          radial-gradient(circle at 12% 14%, rgba(211,60,60,0.22), transparent 26%),
+          linear-gradient(180deg, #111113 0%, #0a0a0b 100%);
+        color: #f0ebe1; font-family: "Instrument Sans", "Helvetica Neue", sans-serif;
+      }
+      body::before {
+        content: ""; position: absolute; inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+        mix-blend-mode: overlay; opacity: 0.5; pointer-events: none;
+      }
+      .stage { position: relative; width: 1200px; height: 630px; padding: 24px; }
+      .card {
+        position: relative; height: 100%; border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 34px; overflow: hidden;
+        background: linear-gradient(115deg, rgba(14,14,15,0.96), rgba(10,10,11,0.84)), #0a0a0b;
+        box-shadow: 0 28px 80px rgba(0,0,0,0.34);
+      }
+      .photo {
+        position: absolute; top: 0; right: 0; width: 54%; height: 100%;
+        object-fit: cover; object-position: center 28%;
+        filter: grayscale(100%) contrast(1.08);
+        -webkit-mask-image: linear-gradient(to right, transparent 0%, black 28%, black 100%);
+        mask-image: linear-gradient(to right, transparent 0%, black 28%, black 100%);
+      }
+      .scrim {
+        position: absolute; inset: 0;
+        background: linear-gradient(90deg, rgba(10,10,11,0.94) 0%, rgba(10,10,11,0.82) 46%, rgba(10,10,11,0.08) 100%);
+      }
+      .copy { position: relative; z-index: 1; display: flex; flex-direction: column; width: 60%; height: 100%; padding: 40px 44px; }
+      .masthead {
+        display: flex; flex-direction: column; gap: 6px; border-bottom: 1px solid rgba(255,255,255,0.14);
+        padding-bottom: 18px; text-transform: uppercase; letter-spacing: 0.16em; font-size: 12px; font-weight: 600;
+      }
+      .masthead .label { color: #d33c3c; }
+      .masthead .note { color: rgba(240,235,225,0.7); }
+      .body { margin: auto 0 0; }
+      .kicker {
+        display: inline-block; margin-bottom: 22px; padding: 7px 12px; background: #d33c3c; color: #fff;
+        font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+      }
+      h1 {
+        margin: 0; max-width: 12ch; font-family: "Newsreader", Georgia, serif; font-weight: 600;
+        font-size: 76px; line-height: 0.95; letter-spacing: -0.03em;
+        text-shadow: 0 10px 30px rgba(0,0,0,0.26);
+      }
+      .lead {
+        margin: 24px 0 0; max-width: 30ch; padding-left: 18px; border-left: 1px solid rgba(255,255,255,0.14);
+        color: rgba(240,235,225,0.78); font-size: 23px; line-height: 1.4; letter-spacing: -0.01em;
+      }
+      .caption {
+        margin-top: 26px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.14);
+        color: rgba(240,235,225,0.6); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="stage">
+      <section class="card">
+        <img class="photo" src="/tony-source.jpg" alt="Professor Tony Bailetti" />
+        <div class="scrim"></div>
+        <div class="copy">
+          <header class="masthead">
+            <span class="label">In memory of Professor Tony Bailetti</span>
+            <span class="note">A message for his family</span>
+          </header>
+          <div class="body">
+            <span class="kicker">Memory Booth</span>
+            <h1>Share a memory of Tony.</h1>
+            <p class="lead">Record a short video message for his family — at the celebration of his life, or from anywhere.</p>
+            <p class="caption">Take your time · Speak from the heart</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
