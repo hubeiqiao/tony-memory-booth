@@ -4,6 +4,8 @@ A calm, candlelit web app where guests record a short video message for the
 family of **Dr. Tony Bailetti (1948–2026)** — at the **celebration of his life**,
 and for anyone who wants to add a memory afterward.
 
+*For Tony — and for the family who keeps him.*
+
 **Live:** https://tony-memory.hubeiqiao.com · **In memoriam:**
 https://sprott.carleton.ca/2026/in-memoriam-tony-bailetti/
 
