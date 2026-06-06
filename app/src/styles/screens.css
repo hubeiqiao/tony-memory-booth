@@ -175,6 +175,16 @@
   border: 0;
 }
 
+/* ---- Turnstile (phone) ---- */
+.turnstile {
+  display: flex;
+  justify-content: center;
+  min-height: 0;
+}
+.turnstile:empty {
+  display: none;
+}
+
 /* ---- Small attendant hint (booth) ---- */
 .attendant {
   position: fixed;

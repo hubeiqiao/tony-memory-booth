@@ -6,6 +6,7 @@ import { createBufferService } from "./buffer-service";
 import { createUploadService } from "./api";
 import { requestPersistentStorage } from "./storage/persist";
 import { ulid } from "./util/ulid";
+import { initTurnstile } from "./turnstile";
 
 const mode = detectMode();
 applyTheme(mode);
@@ -50,4 +51,9 @@ if (root) {
     newId: () => ulid(),
     onError: (e) => console.warn("[memory-booth]", e),
   });
+
+  // Phone anti-spam: render the Turnstile widget if a sitekey is configured.
+  if (mode === "phone") {
+    void initTurnstile(root.querySelector('[data-ref="turnstile"]'));
+  }
 }

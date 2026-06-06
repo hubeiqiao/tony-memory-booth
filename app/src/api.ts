@@ -7,6 +7,7 @@ import {
   type CompleteManifest,
 } from "./upload/uploader";
 import type { UploadService } from "./ui/controller";
+import { getTurnstileToken } from "./turnstile";
 
 // Client transport for the Worker API (§8). Token acquisition: booth uses a
 // server secret entered at setup (?key= / sessionStorage); phone uses Turnstile
@@ -19,7 +20,7 @@ async function getToken(mode: Mode): Promise<string> {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(
-      mode === "booth" ? { mode, boothSecret } : { mode, turnstileToken: "" }
+      mode === "booth" ? { mode, boothSecret } : { mode, turnstileToken: getTurnstileToken() }
     ),
   });
   if (!res.ok) throw new Error(`token ${res.status}`);
