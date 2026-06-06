@@ -6,6 +6,7 @@ and believed in can record a short video message for his family — at the
 
 *For Tony — and for the family who keeps him.*
 
+Demo (temporary): https://tony-memory.hubeiqiao.com
 In memoriam: https://sprott.carleton.ca/2026/in-memoriam-tony-bailetti/
 
 > "Share a memory of Tony." — a few words for his family. Take your time; speak
