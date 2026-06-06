@@ -255,6 +255,61 @@ export async function handleRequest(request: Request, env: HandlerEnv): Promise<
     return json({ recordings });
   }
 
+  // ---- admin: delete / takedown ----
+  const adminDelMatch = path.match(/^\/api\/admin\/recordings\/([^/]+)$/);
+  if (adminDelMatch && method === "DELETE") {
+    if (!adminAllowed(request, env)) return json({ error: "unauthorized" }, 401);
+    const row = await env.index.get(adminDelMatch[1]);
+    if (!row) return json({ error: "not found" }, 404);
+    const dir = dirOf(row.key);
+    await env.bucket.delete(row.key);
+    await env.bucket.delete(`${dir}/meta.json`);
+    for (const n of await listReceivedParts(env, dir)) {
+      await env.bucket.delete(`${dir}/parts/${n}`);
+    }
+    await env.index.delete(adminDelMatch[1]);
+    return json({ ok: true });
+  }
+
+  // ---- admin: read a recording's metadata (contact details, consent) ----
+  const adminMetaMatch = path.match(/^\/api\/admin\/recordings\/([^/]+)\/meta$/);
+  if (adminMetaMatch && method === "GET") {
+    if (!adminAllowed(request, env)) return json({ error: "unauthorized" }, 401);
+    const row = await env.index.get(adminMetaMatch[1]);
+    if (!row) return json({ error: "not found" }, 404);
+    const obj = await env.bucket.get(`${dirOf(row.key)}/meta.json`);
+    const text = obj ? await obj.text() : "{}";
+    return new Response(text, {
+      headers: {
+        "content-type": "application/json",
+        "x-content-type-options": "nosniff",
+        "cache-control": "private, no-store",
+      },
+    });
+  }
+
+  // ---- admin: inline media for playback (XSS-safe content-type) ----
+  const mediaMatch = path.match(/^\/api\/admin\/recordings\/([^/]+)\/media$/);
+  if (mediaMatch && method === "GET") {
+    if (!adminAllowed(request, env)) return json({ error: "unauthorized" }, 401);
+    const row = await env.index.get(mediaMatch[1]);
+    if (!row) return json({ error: "not found" }, 404);
+    const obj = await env.bucket.get(row.key);
+    if (!obj) return json({ error: "no object" }, 404);
+    const buf = await obj.arrayBuffer();
+    // Derive the type from the validated extension — never from client-supplied
+    // mime — so a malicious upload can't be served as HTML.
+    const type = row.ext === "mp4" ? "video/mp4" : "video/webm";
+    return new Response(buf, {
+      headers: {
+        "content-type": type,
+        "x-content-type-options": "nosniff",
+        "content-security-policy": "default-src 'none'; media-src 'self'",
+        "cache-control": "private, no-store",
+      },
+    });
+  }
+
   // ---- admin: download (XSS-safe: never serve guest media inline) ----
   const dlMatch = path.match(/^\/api\/admin\/recordings\/([^/]+)\/download$/);
   if (dlMatch && method === "GET") {

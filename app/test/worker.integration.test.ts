@@ -239,6 +239,35 @@ describe("worker handler", () => {
     expect(r.status).toBe(415);
   });
 
+  it("admin media plays inline with a safe video type", async () => {
+    const t = await token();
+    await uploadRecording(crypto.getRandomValues(new Uint8Array(8)), t);
+    const noauth = await handleRequest(req(`/api/admin/recordings/${ID}/media`), env);
+    expect(noauth.status).toBe(401);
+    const r = await handleRequest(
+      req(`/api/admin/recordings/${ID}/media`, { headers: { "x-admin-key": "admin-test-key" } }),
+      env
+    );
+    expect(r.status).toBe(200);
+    expect(r.headers.get("content-type")).toBe("video/webm");
+    expect(r.headers.get("x-content-type-options")).toBe("nosniff");
+  });
+
+  it("admin can delete a recording (takedown)", async () => {
+    const t = await token();
+    await uploadRecording(crypto.getRandomValues(new Uint8Array(8)), t);
+    expect(await index.get(ID)).not.toBeNull();
+    const noauth = await handleRequest(req(`/api/admin/recordings/${ID}`, { method: "DELETE" }), env);
+    expect(noauth.status).toBe(401);
+    const del = await handleRequest(
+      req(`/api/admin/recordings/${ID}`, { method: "DELETE", headers: { "x-admin-key": "admin-test-key" } }),
+      env
+    );
+    expect(del.status).toBe(200);
+    expect(await index.get(ID)).toBeNull();
+    expect(bucket.keys().length).toBe(0);
+  });
+
   it("admin endpoints require auth (Access header or admin key)", async () => {
     const noKey = await handleRequest(req("/api/admin/recordings"), env);
     expect(noKey.status).toBe(401);

@@ -66,4 +66,7 @@ export class MemoryIndex implements IndexLike {
   async list(): Promise<RecordRow[]> {
     return [...this.rows.values()].map((r) => ({ ...r }));
   }
+  async delete(id: string): Promise<void> {
+    this.rows.delete(id);
+  }
 }

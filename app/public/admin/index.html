@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="color-scheme" content="dark" />
+    <title>Memory Booth — for the family</title>
+    <style>
+      @font-face { font-family: "Newsreader"; font-weight: 600; font-display: swap; src: url("/fonts/newsreader-600-latin.woff2") format("woff2"); }
+      @font-face { font-family: "Instrument Sans"; font-weight: 400; font-display: swap; src: url("/fonts/instrument-400-latin.woff2") format("woff2"); }
+      @font-face { font-family: "Instrument Sans"; font-weight: 600; font-display: swap; src: url("/fonts/instrument-600-latin.woff2") format("woff2"); }
+      :root {
+        --bg:#0a0a0b; --elev:#161618; --ink:#f0ebe1; --soft:#8c857b; --accent:#d33c3c; --line:rgba(255,255,255,.1);
+      }
+      * { box-sizing: border-box; }
+      body { margin:0; background:var(--bg); color:var(--ink); font-family:"Instrument Sans",system-ui,sans-serif; line-height:1.5; }
+      header { padding:48px 24px 24px; text-align:center; border-bottom:1px solid var(--line); }
+      h1 { font-family:"Newsreader",Georgia,serif; font-weight:600; font-size:clamp(2rem,5vw,3rem); margin:0 0 .3em; letter-spacing:-.02em; }
+      .sub { color:var(--soft); margin:0; }
+      .bar { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:18px; }
+      .btn { font:inherit; font-weight:600; padding:10px 18px; border-radius:999px; border:1px solid var(--line); background:transparent; color:var(--ink); cursor:pointer; text-decoration:none; }
+      .btn--primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+      main { max-width:1100px; margin:0 auto; padding:24px; }
+      .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:22px; }
+      .card { background:var(--elev); border:1px solid var(--line); border-radius:16px; overflow:hidden; }
+      .card video { width:100%; aspect-ratio:4/3; background:#000; display:block; }
+      .meta { padding:14px 16px; }
+      .meta .name { font-weight:600; }
+      .meta .row { color:var(--soft); font-size:.9rem; margin-top:4px; }
+      .meta .contact { color:var(--ink); font-size:.9rem; margin-top:8px; word-break:break-word; }
+      .card .dl { display:inline-block; margin-top:12px; color:var(--accent); font-weight:600; text-decoration:none; font-size:.9rem; }
+      .empty,.note { text-align:center; color:var(--soft); padding:48px 16px; }
+      .gate { max-width:420px; margin:64px auto; padding:0 24px; text-align:center; }
+      .gate input { width:100%; min-height:48px; padding:0 14px; font:inherit; color:var(--ink); background:var(--elev); border:1px solid var(--line); border-radius:10px; margin:12px 0; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      const root = document.getElementById("root");
+      const params = new URLSearchParams(location.search);
+      let key = params.get("key") || sessionStorage.getItem("mbAdminKey") || "";
+
+      const fmtTime = (ms) => new Date(ms).toLocaleString();
+      const fmtDur = (ms) => { const s=Math.round((ms||0)/1000); return `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`; };
+      const esc = (s) => (s==null?"":String(s)).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+      function gate(msg) {
+        root.innerHTML = `<div class="gate">
+          <h1 style="font-family:Newsreader,serif">For Tony's family</h1>
+          <p class="sub">${msg||"Enter the family access key to view the messages."}</p>
+          <input id="k" type="password" placeholder="Access key" />
+          <button class="btn btn--primary" id="go">View messages</button>
+        </div>`;
+        document.getElementById("go").onclick = () => {
+          key = document.getElementById("k").value.trim();
+          sessionStorage.setItem("mbAdminKey", key);
+          load();
+        };
+        document.getElementById("k").addEventListener("keydown", e => { if (e.key==="Enter") document.getElementById("go").click(); });
+      }
+
+      async function load() {
+        if (!key) return gate();
+        root.innerHTML = `<div class="note">Loading…</div>`;
+        let res;
+        try { res = await fetch(`/api/admin/recordings?key=${encodeURIComponent(key)}`); }
+        catch { return gate("Couldn't connect. Try again."); }
+        if (res.status === 401) { sessionStorage.removeItem("mbAdminKey"); return gate("That key didn't work. Please try again."); }
+        const { recordings } = await res.json();
+        const done = recordings.filter(r => r.status === "complete").sort((a,b)=>b.receivedAt-a.receivedAt);
+        sessionStorage.setItem("mbAdminKey", key);
+
+        // pull contact details (meta.json) for any recordings that have them
+        await Promise.all(done.map(async r => {
+          if (!r.hasContact) return;
+          try {
+            const m = await fetch(`/api/admin/recordings/${r.id}/meta?key=${encodeURIComponent(key)}`);
+            if (m.ok) r.contact = (await m.json()).contact || null;
+          } catch { /* ignore */ }
+        }));
+
+        const head = `<header>
+          <h1>Messages for Tony's family</h1>
+          <p class="sub">${done.length} message${done.length===1?"":"s"} so far. Each one was recorded with love.</p>
+          <div class="bar">
+            <a class="btn" href="#" id="csv">Download contacts (CSV)</a>
+            <a class="btn btn--primary" href="#" id="all">Download all videos</a>
+          </div>
+        </header>`;
+
+        if (!done.length) { root.innerHTML = head + `<main><p class="empty">No messages yet.</p></main>`; wire(done); return; }
+
+        const cards = done.map(r => {
+          const media = `/api/admin/recordings/${r.id}/media?key=${encodeURIComponent(key)}`;
+          const dl = `/api/admin/recordings/${r.id}/download?key=${encodeURIComponent(key)}`;
+          const c = r.contact || {};
+          const bits = [c.name, c.email, c.phone].filter(Boolean).map(esc).join(" · ");
+          const contact = bits ? `<div class="contact">${bits}</div>` : "";
+          return `<div class="card">
+            <video controls preload="metadata" src="${media}"></video>
+            <div class="meta">
+              <div class="name">${esc(new Date(r.receivedAt).toLocaleDateString())} · ${fmtDur(r.durationMs)}</div>
+              <div class="row">${esc(fmtTime(r.receivedAt))} · ${esc(r.mode)}</div>
+              ${contact}
+              <a class="dl" href="${dl}">Download</a>
+              <a class="dl" href="#" data-del="${r.id}" style="color:var(--soft);margin-left:14px">Remove</a>
+            </div>
+          </div>`;
+        }).join("");
+        root.innerHTML = head + `<main><div class="grid">${cards}</div></main>`;
+        wire(done);
+      }
+
+      function wire(done) {
+        document.querySelectorAll("[data-del]").forEach(el => el.onclick = async (e) => {
+          e.preventDefault();
+          if (!confirm("Remove this message permanently? This cannot be undone.")) return;
+          const id = el.getAttribute("data-del");
+          await fetch(`/api/admin/recordings/${id}?key=${encodeURIComponent(key)}`, { method: "DELETE" });
+          load();
+        });
+        const all = document.getElementById("all");
+        if (all) all.onclick = (e) => { e.preventDefault(); done.forEach((r,i)=>setTimeout(()=>{
+          const a=document.createElement("a"); a.href=`/api/admin/recordings/${r.id}/download?key=${encodeURIComponent(key)}`; a.download=""; document.body.appendChild(a); a.click(); a.remove();
+        }, i*800)); };
+        const csv = document.getElementById("csv");
+        if (csv) csv.onclick = (e) => { e.preventDefault();
+          const rows = [["id","receivedAt","mode","durationMs","name","email","phone","status"]].concat(done.map(r=>{
+            const c=r.contact||{}; const q=(v)=>`"${String(v==null?"":v).replace(/"/g,'""')}"`;
+            return [r.id,new Date(r.receivedAt).toISOString(),r.mode,r.durationMs,q(c.name),q(c.email),q(c.phone),r.status];
+          }));
+          const blob = new Blob([rows.map(r=>r.join(",")).join("\n")], {type:"text/csv"});
+          const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="memory-booth-contacts.csv"; a.click();
+        };
+      }
+
+      load();
+    </script>
+  </body>
+</html>

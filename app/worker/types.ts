@@ -37,6 +37,7 @@ export interface IndexLike {
   get(id: string): Promise<RecordRow | null>;
   setStatus(id: string, status: RecordRow["status"], patch?: Partial<RecordRow>): Promise<void>;
   list(): Promise<RecordRow[]>;
+  delete(id: string): Promise<void>;
 }
 
 export interface HandlerEnv {

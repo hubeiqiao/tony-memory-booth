@@ -102,6 +102,9 @@ function d1Index(db: D1Database): IndexLike {
       const res = await db.prepare(`SELECT * FROM recordings ORDER BY receivedAt DESC`).all();
       return (res.results as unknown as RecordRow[]) ?? [];
     },
+    delete: async (id) => {
+      await db.prepare(`DELETE FROM recordings WHERE id=?`).bind(id).run();
+    },
   };
 }
 
