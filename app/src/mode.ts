@@ -1,9 +1,19 @@
 import type { Mode } from "./types";
 
-// Booth is the default (the staffed centerpiece); ?mode=phone switches to the
-// warm "paper" theme for the QR/phone path.
-export function detectMode(search: string = typeof location !== "undefined" ? location.search : ""): Mode {
-  return new URLSearchParams(search).get("mode") === "phone" ? "phone" : "booth";
+// The public default is PHONE — it works for any visitor (upload token via
+// Turnstile, no disk copy). BOOTH is the staffed laptop: opt in with
+// `?mode=booth` or by opening with a booth key (`?key=...`, which the attendant
+// uses at setup). This keeps the bare public URL fully working.
+export function detectMode(
+  search: string = typeof location !== "undefined" ? location.search : "",
+  hasBoothKey = false
+): Mode {
+  const p = new URLSearchParams(search);
+  const m = p.get("mode");
+  if (m === "phone") return "phone";
+  if (m === "booth") return "booth";
+  if (hasBoothKey || p.get("key")) return "booth";
+  return "phone";
 }
 
 export function themeClass(mode: Mode): "theme-candlelight" | "theme-paper" {

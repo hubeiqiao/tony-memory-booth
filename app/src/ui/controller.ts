@@ -276,7 +276,12 @@ export class Controller {
         this.updateSaving();
         if (this.deps.mode === "phone" && this.state === "saving") this.dispatch("SAVED");
       })
-      .catch((e) => this.deps.onError?.(e)); // queued; never blocks the guest
+      .catch((e) => {
+        this.deps.onError?.(e);
+        // phone gates ✓ on upload — if it ultimately fails, don't hang on
+        // "saving"; surface it (the clip is still buffered in IndexedDB).
+        if (this.deps.mode === "phone" && this.state === "saving") this.dispatch("SAVE_FAILED");
+      });
 
     // Booth is durably safe once idb + disk are done — don't wait on the network.
     if (isSaved(this.deps.mode, this.cur.durability)) {

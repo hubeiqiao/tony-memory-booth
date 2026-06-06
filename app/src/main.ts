@@ -8,18 +8,20 @@ import { requestPersistentStorage } from "./storage/persist";
 import { ulid } from "./util/ulid";
 import { initTurnstile } from "./turnstile";
 
-const mode = detectMode();
-applyTheme(mode);
-
-// Pick up a booth setup secret from the URL (?key=...) once, then keep it out
-// of the address bar.
-const key = new URLSearchParams(location.search).get("key");
-if (key) {
-  sessionStorage.setItem("boothSecret", key);
+// Read a booth setup key from the URL (?key=...) first; its presence activates
+// booth mode. Then keep it out of the address bar.
+const params = new URLSearchParams(location.search);
+const urlKey = params.get("key");
+if (urlKey) {
+  sessionStorage.setItem("boothSecret", urlKey);
   const url = new URL(location.href);
   url.searchParams.delete("key");
   history.replaceState({}, "", url.toString());
 }
+const hasBoothKey = !!(urlKey || sessionStorage.getItem("boothSecret"));
+
+const mode = detectMode(location.search, hasBoothKey);
+applyTheme(mode);
 
 const scheduler: Scheduler = {
   after: (ms, cb) => {
