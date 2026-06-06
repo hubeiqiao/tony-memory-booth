@@ -1,0 +1,28 @@
+name = "memory-booth"
+main = "worker/index.ts"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# Static SPA is built by Vite into ./dist and served by the Worker.
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+
+# Private object storage for recordings (local: lives in .wrangler/state).
+[[r2_buckets]]
+binding = "RECORDINGS"
+bucket_name = "memory-booth-recordings"
+
+# Authoritative index for the family view / reconciliation.
+[[d1_databases]]
+binding = "DB"
+database_name = "memory-booth"
+database_id = "local-dev-placeholder"
+
+# Dev-only vars. In production set BOOTH_SECRET via `wrangler secret put`
+# and remove TURNSTILE_DISABLED (Turnstile is the phone gate).
+[vars]
+BOOTH_SECRET = "dev-booth-secret-change-me"
+TURNSTILE_DISABLED = "1"
+MAX_BYTES = "157286400"
+MAX_DURATION_MS = "150000"

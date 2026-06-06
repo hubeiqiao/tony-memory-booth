@@ -1,0 +1,14 @@
+CREATE TABLE IF NOT EXISTS recordings (
+  id TEXT PRIMARY KEY,
+  key TEXT NOT NULL,
+  receivedAt INTEGER NOT NULL,
+  createdAt INTEGER NOT NULL,
+  mode TEXT NOT NULL,
+  durationMs INTEGER NOT NULL DEFAULT 0,
+  mimeType TEXT NOT NULL,
+  ext TEXT NOT NULL,
+  sizeBytes INTEGER NOT NULL DEFAULT 0,
+  status TEXT NOT NULL,
+  hasContact INTEGER NOT NULL DEFAULT 0,
+  consentVer TEXT NOT NULL DEFAULT ''
+);

@@ -1,0 +1,76 @@
+/* ============================================================
+   Design tokens — the contract between Design-Direction.md and the UI.
+   Two themes from one warm family: Candlelight (booth) + Paper (phone/web).
+   ============================================================ */
+
+:root {
+  /* Type families — self-hosted; warm, legible fallbacks if a face is missing */
+  --font-display: "Fraunces", "Hoefler Text", "Baskerville", Georgia, serif;
+  --font-ui: "Hanken Grotesk", "Avenir Next", "Segoe UI", Roboto, sans-serif;
+
+  /* Fluid type scale */
+  --fs-prompt: clamp(2rem, 1.2rem + 3.4vw, 3.4rem);
+  --fs-count: clamp(4rem, 2rem + 12vw, 9rem);
+  --fs-lead: clamp(1.05rem, 0.95rem + 0.7vw, 1.4rem);
+  --fs-body: clamp(1rem, 0.96rem + 0.3vw, 1.18rem);
+  --fs-small: 0.95rem;
+
+  /* Spacing */
+  --s-1: 0.5rem;
+  --s-2: 0.85rem;
+  --s-3: 1.25rem;
+  --s-4: 2rem;
+  --s-5: 3rem;
+  --s-6: 4.5rem;
+
+  /* Radius & targets */
+  --radius: 18px;
+  --radius-sm: 12px;
+  --tap: 56px; /* comfortably > 48px min */
+
+  /* Motion — slow, breath-like */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast: 240ms;
+  --dur-med: 440ms;
+  --dur-slow: 560ms;
+  --breath: 2400ms; /* REC pulse / breathing */
+}
+
+/* ---- Candlelight (warm dark) — the booth default ---- */
+.theme-candlelight {
+  --bg: #17120e;
+  --bg-deep: #100c09;
+  --bg-elev: #211a14;
+  --ink: #f4ebdd;
+  --ink-soft: #cdbfac;
+  --muted: #9a8a74;
+  --accent: #d2a24c;
+  --accent-dim: #c9933e;
+  --accent-ink: #1a130a; /* text on amber */
+  --glow: rgba(210, 162, 76, 0.16);
+  --rule: rgba(244, 235, 221, 0.12);
+  --field-bg: rgba(244, 235, 221, 0.05);
+  --shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+  --grain-opacity: 0.05;
+  color-scheme: dark;
+}
+
+/* ---- Paper (warm light) — phone & after-event ---- */
+.theme-paper {
+  --bg: #fbf8f2;
+  --bg-deep: #f3ede1;
+  --bg-elev: #ffffff;
+  --ink: #2b2925;
+  --ink-soft: #544f47;
+  --muted: #8b8377;
+  --accent: #9c7a45;
+  --accent-dim: #876a3b;
+  --accent-ink: #fbf8f2; /* text on bronze */
+  --glow: rgba(156, 122, 69, 0.1);
+  --rule: #e7dfd0;
+  --field-bg: rgba(43, 41, 37, 0.03);
+  --shadow: 0 24px 60px rgba(43, 41, 37, 0.12);
+  --grain-opacity: 0.035;
+  color-scheme: light;
+}
