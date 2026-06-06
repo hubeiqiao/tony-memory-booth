@@ -26,7 +26,12 @@ class BrowserCapture implements CaptureService {
   async startPreview(video: HTMLVideoElement): Promise<void> {
     this.teardown();
     this.stream = await navigator.mediaDevices.getUserMedia({
-      video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: "user" },
+      video: {
+        width: { ideal: 1280 },
+        height: { ideal: 960 },
+        aspectRatio: { ideal: 4 / 3 },
+        facingMode: "user",
+      },
       audio: { echoCancellation: true, noiseSuppression: true },
     });
     video.srcObject = this.stream;
