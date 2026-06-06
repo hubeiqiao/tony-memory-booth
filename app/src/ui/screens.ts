@@ -56,7 +56,7 @@ export function buildStage(root: HTMLElement, mode: Mode): ScreenRefs {
       ${section(
         "permission",
         `<p class="prompt">Before we begin.</p>
-         <p class="lead">We'll ask to use the camera and microphone so you can record.</p>
+         <p class="lead">We'll ask to use the camera and microphone <span class="nobr">so you can record.</span></p>
          <div class="turnstile" data-ref="turnstile"></div>
          <div class="controls"><button class="btn btn--primary btn--lg" data-action="allow">Allow</button></div>
          <p class="subtle">Your message goes only to Tony's family.</p>`

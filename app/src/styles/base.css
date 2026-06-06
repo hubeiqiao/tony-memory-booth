@@ -150,6 +150,9 @@ body::after {
   max-width: 42ch;
   margin: 0 auto;
 }
+.nobr {
+  white-space: nowrap;
+}
 
 /* ---- Buttons ---- */
 .controls {
