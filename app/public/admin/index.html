@@ -97,7 +97,7 @@
             <video controls preload="metadata" src="${api(`/api/admin/recordings/${r.id}/media`)}"></video>
             <div class="meta">
               <div class="name">${esc(new Date(r.receivedAt).toLocaleDateString())} · ${fmtDur(r.durationMs)}</div>
-              <div class="row">${esc(fmtTime(r.receivedAt))} · ${esc(r.mode)}</div>
+              <div class="row">${esc(fmtTime(r.receivedAt))}</div>
               ${contact}
               <a class="dl" href="${api(`/api/admin/recordings/${r.id}/download`)}">Download</a>
               <a class="dl" href="#" data-del="${r.id}" style="color:var(--soft);margin-left:14px">Remove</a>
