@@ -160,6 +160,23 @@ describe("Controller (jsdom)", () => {
     expect(c.getState()).toBe("thankyou");
   });
 
+  it("poor-quality recording is NOT blocked — shows review with a gentle note", async () => {
+    const root = mount();
+    const f = fakes("booth");
+    f.capture.metrics = () => ({ peakAudio: 0, maxLuma: 0 }); // silent + black
+    const c = new Controller(root, f.deps);
+    await c.act("begin");
+    await c.act("allow");
+    await flush();
+    await toRecording(c, f.sch);
+    await c.act("stop");
+    await flush();
+    expect(c.getState()).toBe("review"); // not forced back to ready
+    const note = root.querySelector('[data-ref="reviewnote"]');
+    expect(note.hidden).toBe(false);
+    expect(note.textContent.length).toBeGreaterThan(0);
+  });
+
   it("clears contact PII on reset", async () => {
     const root = mount();
     const f = fakes("booth");

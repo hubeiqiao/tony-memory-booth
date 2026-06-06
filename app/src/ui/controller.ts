@@ -211,14 +211,26 @@ export class Controller {
       peakAudioLevel: m.peakAudio,
       maxLuma: m.maxLuma,
     });
+    this.deps.capture.attachPlayback(this.refs.reviewVideo, result.blob);
+    const note = this.refs.reviewNote;
     if (sanity.ok) {
-      this.deps.capture.attachPlayback(this.refs.reviewVideo, result.blob);
-      this.dispatch("CHECK_PASS");
+      note.hidden = true;
+      note.textContent = "";
     } else {
-      this.refs.checkNote.textContent = "Let's try that once more.";
-      this.dispatch("CHECK_FAIL");
-      await this.startPreview();
+      // Never block on an emotional moment — show it and let the guest decide.
+      const quiet = sanity.reasons.includes("no_audio");
+      const dark = sanity.reasons.includes("black_video");
+      const short = sanity.reasons.includes("too_short");
+      note.textContent = short
+        ? "That was very short — take a look, and record again if you'd like."
+        : dark && quiet
+        ? "It looked dark and we didn't hear much — take a look, and re-record if you'd like."
+        : dark
+        ? "It looked a little dark — take a look, and re-record if you'd like."
+        : "We didn't hear much — take a look, and re-record if you'd like.";
+      note.hidden = false;
     }
+    this.dispatch("CHECK_PASS");
   }
 
   private collectContact(): RecordingMeta["contact"] {

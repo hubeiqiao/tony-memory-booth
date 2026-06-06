@@ -13,6 +13,7 @@ export interface ScreenRefs {
   reviewVideo: HTMLVideoElement;
   countdownNum: HTMLElement;
   timer: HTMLElement;
+  reviewNote: HTMLElement;
   levelFill: HTMLElement;
   savingStatus: HTMLElement;
   checkNote: HTMLElement;
@@ -65,6 +66,7 @@ export function buildStage(root: HTMLElement, mode: Mode): ScreenRefs {
         "ready",
         `<div class="preview-frame"><video data-ref="preview" muted playsinline></video></div>
          <p class="lead">When you're ready.</p>
+         <p class="subtle">If you're not sure where to start — how you met him, a moment he believed in you, or something he taught you that stayed.</p>
          <div class="controls"><button class="btn btn--primary btn--lg" data-action="start">Start recording</button></div>
          <div class="level" aria-hidden="true"><i data-ref="level"></i></div>`
       )}
@@ -90,6 +92,7 @@ export function buildStage(root: HTMLElement, mode: Mode): ScreenRefs {
         "review",
         `<div class="preview-frame"><video data-ref="review" playsinline controls></video></div>
          <p class="lead">Take a moment to watch it back.</p>
+         <p class="subtle" data-ref="reviewnote" hidden></p>
          <div class="controls">
            <button class="btn" data-action="rerecord">Record again</button>
            <button class="btn btn--primary" data-action="keep">Keep &amp; send</button>
@@ -154,6 +157,7 @@ export function buildStage(root: HTMLElement, mode: Mode): ScreenRefs {
     reviewVideo: ref<HTMLVideoElement>("review"),
     countdownNum: ref("count"),
     timer: ref("timer"),
+    reviewNote: ref("reviewnote"),
     levelFill: ref("level"),
     savingStatus: ref("saving"),
     checkNote: ref("checknote"),
