@@ -9,6 +9,7 @@ export interface ScreenRefs {
   stage: HTMLElement;
   screens: Partial<Record<string, HTMLElement>>;
   previewVideo: HTMLVideoElement;
+  recPreview: HTMLVideoElement;
   reviewVideo: HTMLVideoElement;
   countdownNum: HTMLElement;
   timer: HTMLElement;
@@ -45,14 +46,14 @@ export function buildStage(root: HTMLElement, mode: Mode): ScreenRefs {
     <div class="stage">
       ${section(
         "welcome",
-        `<div class="portrait portrait--placeholder" aria-hidden="true">T</div>
+        `<img class="portrait" src="/tony.jpg" alt="Professor Tony Bailetti" onerror="this.classList.add('portrait--placeholder');this.removeAttribute('src');this.textContent='T'" />
          <p class="prompt">Share a memory of Tony.</p>
-         <p class="lead">A short message for his family — take your time.</p>
+         <p class="lead">A few words for his family.</p>
          <div class="controls"><button class="btn btn--primary btn--lg" data-action="begin">${begin}</button></div>`
       )}
       ${section(
         "permission",
-        `<p class="prompt">A quick hello to your camera.</p>
+        `<p class="prompt">Before we begin.</p>
          <p class="lead">We'll ask to use the camera and microphone so you can record.</p>
          <div class="controls"><button class="btn btn--primary btn--lg" data-action="allow">Allow</button></div>
          <p class="subtle">Your message goes only to Tony's family.</p>`
@@ -60,14 +61,14 @@ export function buildStage(root: HTMLElement, mode: Mode): ScreenRefs {
       ${section(
         "ready",
         `<div class="preview-frame"><video data-ref="preview" muted playsinline></video></div>
-         <p class="lead">When you're ready, take your time.</p>
+         <p class="lead">When you're ready.</p>
          <div class="controls"><button class="btn btn--primary btn--lg" data-action="start">Start recording</button></div>
          <div class="level" aria-hidden="true"><i data-ref="level"></i></div>`
       )}
       ${section(
         "countdown",
         `<div class="countdown"><span class="ring"></span><span class="num" data-ref="count">3</span></div>
-         <p class="lead">Take your time.</p>`
+         <p class="lead">Gather your thoughts.</p>`
       )}
       ${section(
         "recording",
@@ -84,8 +85,8 @@ export function buildStage(root: HTMLElement, mode: Mode): ScreenRefs {
       )}
       ${section(
         "review",
-        `<div class="preview-frame"><video class="is-playback" data-ref="review" playsinline controls></video></div>
-         <p class="lead">Happy with it?</p>
+        `<div class="preview-frame"><video data-ref="review" playsinline controls></video></div>
+         <p class="lead">Take a moment to watch it back.</p>
          <div class="controls">
            <button class="btn" data-action="rerecord">Record again</button>
            <button class="btn btn--primary" data-action="keep">Keep &amp; send</button>
@@ -145,6 +146,7 @@ export function buildStage(root: HTMLElement, mode: Mode): ScreenRefs {
     stage,
     screens,
     previewVideo: ref<HTMLVideoElement>("preview"),
+    recPreview: ref<HTMLVideoElement>("recpreview"),
     reviewVideo: ref<HTMLVideoElement>("review"),
     countdownNum: ref("count"),
     timer: ref("timer"),

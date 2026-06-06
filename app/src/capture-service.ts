@@ -67,6 +67,14 @@ class BrowserCapture implements CaptureService {
     }, 400);
   }
 
+  /** Attach the current live stream to another video element (recording screen). */
+  showLive(video: HTMLVideoElement): void {
+    if (!this.stream) return;
+    video.srcObject = this.stream;
+    video.muted = true;
+    void video.play().catch(() => {});
+  }
+
   async beginRecording(onChunk: (seq: number, blob: Blob) => void): Promise<void> {
     if (!this.stream) throw new Error("no preview stream");
     const choice = pickMimeType((m) => MediaRecorder.isTypeSupported(m));

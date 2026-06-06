@@ -20,10 +20,10 @@ body {
   line-height: 1.55;
   color: var(--ink);
   background-color: var(--bg);
-  /* a soft pool of candlelight at top-centre, settling into the deep warm base */
+  /* a soft pool of light at top-centre, settling into the deep base */
   background-image: radial-gradient(
     120% 90% at 50% -10%,
-    var(--glow) 0%,
+    var(--atmosphere) 0%,
     transparent 55%
   );
   background-attachment: fixed;
@@ -57,14 +57,6 @@ body::after {
   );
   pointer-events: none;
   z-index: 1;
-}
-.theme-paper body::after,
-body.theme-paper::after {
-  background: radial-gradient(
-    130% 120% at 50% 45%,
-    transparent 62%,
-    rgba(43, 41, 37, 0.08) 100%
-  );
 }
 
 /* ---- Stage: screens stacked in one cell, cross-dissolving ---- */
@@ -256,10 +248,7 @@ body.theme-paper::after {
   height: 100%;
   object-fit: cover;
   display: block;
-  transform: scaleX(-1); /* mirror live self-view */
-}
-.preview-frame video.is-playback {
-  transform: none; /* recorded playback is not mirrored */
+  /* No mirror: the live preview matches the recorded file exactly. */
 }
 
 /* ---- Focus ring: amber, always visible on keyboard ---- */

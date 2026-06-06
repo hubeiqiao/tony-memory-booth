@@ -1,12 +1,13 @@
 /* ============================================================
-   Design tokens — the contract between Design-Direction.md and the UI.
-   Two themes from one warm family: Candlelight (booth) + Paper (phone/web).
+   Design tokens — aligned with the memorial site (tony.hubeiqiao.com):
+   Newsreader + Instrument Sans, near-black paper, warm ivory ink, one red
+   accent, grayscale photos. Booth + phone share the language; one dark family.
    ============================================================ */
 
 :root {
-  /* Type families — self-hosted; warm, legible fallbacks if a face is missing */
-  --font-display: "Fraunces", "Hoefler Text", "Baskerville", Georgia, serif;
-  --font-ui: "Hanken Grotesk", "Avenir Next", "Segoe UI", Roboto, sans-serif;
+  /* Type — self-hosted; same families as the memorial site */
+  --font-display: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-ui: "Instrument Sans", "Helvetica Neue", system-ui, sans-serif;
 
   /* Fluid type scale */
   --fs-prompt: clamp(2rem, 1.2rem + 3.4vw, 3.4rem);
@@ -37,40 +38,24 @@
   --breath: 2400ms; /* REC pulse / breathing */
 }
 
-/* ---- Candlelight (warm dark) — the booth default ---- */
-.theme-candlelight {
-  --bg: #17120e;
-  --bg-deep: #100c09;
-  --bg-elev: #211a14;
-  --ink: #f4ebdd;
-  --ink-soft: #cdbfac;
-  --muted: #9a8a74;
-  --accent: #d2a24c;
-  --accent-dim: #c9933e;
-  --accent-ink: #1a130a; /* text on amber */
-  --glow: rgba(210, 162, 76, 0.16);
-  --rule: rgba(244, 235, 221, 0.12);
-  --field-bg: rgba(244, 235, 221, 0.05);
-  --shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
-  --grain-opacity: 0.05;
-  color-scheme: dark;
-}
-
-/* ---- Paper (warm light) — phone & after-event ---- */
+/* The memorial's palette — dark, dignified. Booth + phone share it. */
+.theme-candlelight,
 .theme-paper {
-  --bg: #fbf8f2;
-  --bg-deep: #f3ede1;
-  --bg-elev: #ffffff;
-  --ink: #2b2925;
-  --ink-soft: #544f47;
-  --muted: #8b8377;
-  --accent: #9c7a45;
-  --accent-dim: #876a3b;
-  --accent-ink: #fbf8f2; /* text on bronze */
-  --glow: rgba(156, 122, 69, 0.1);
-  --rule: #e7dfd0;
-  --field-bg: rgba(43, 41, 37, 0.03);
-  --shadow: 0 24px 60px rgba(43, 41, 37, 0.12);
-  --grain-opacity: 0.035;
-  color-scheme: light;
+  --bg: #0a0a0b;
+  --bg-deep: #060607;
+  --bg-elev: #161618;
+  --ink: #f0ebe1;
+  --ink-soft: #8c857b;
+  --muted: #6f6a62;
+  --accent: #d33c3c;
+  --accent-dim: #b53333;
+  --accent-ink: #ffffff; /* text on red */
+  --glow: rgba(211, 60, 60, 0.22); /* accent bloom: button / REC */
+  --atmosphere: rgba(240, 235, 225, 0.05); /* faint page light, not coloured */
+  --rule: rgba(255, 255, 255, 0.1);
+  --field-bg: rgba(255, 255, 255, 0.04);
+  --shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.45),
+    0 30px 60px -30px rgba(0, 0, 0, 0.6);
+  --grain-opacity: 0.06;
+  color-scheme: dark;
 }

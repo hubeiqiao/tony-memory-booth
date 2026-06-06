@@ -9,6 +9,7 @@ import { buildStage, SCREEN_FOR, type ScreenRefs } from "./screens";
 // ---- Injected services (browser wiring in services.ts; fakes in tests) ----
 export interface CaptureService {
   startPreview(video: HTMLVideoElement): Promise<void>;
+  showLive(video: HTMLVideoElement): void;
   beginRecording(onChunk: (seq: number, blob: Blob) => void): Promise<void>;
   stopRecording(): Promise<CaptureResult>;
   metrics(): { peakAudio: number; maxLuma: number };
@@ -108,8 +109,7 @@ export class Controller {
     try {
       switch (action) {
         case "begin":
-          this.dispatch("BEGIN");
-          if (this.deps.mode === "booth") await this.requestPermission();
+          this.dispatch("BEGIN"); // → permission screen; the Allow button starts the camera
           break;
         case "allow":
           await this.requestPermission();
@@ -180,6 +180,7 @@ export class Controller {
     await this.deps.capture.beginRecording((seq, blob) => {
       void this.deps.buffer.append(this.cur.id, seq, blob);
     });
+    this.deps.capture.showLive(this.refs.recPreview); // live preview on the recording screen
     this.dispatch("COUNTDOWN_DONE");
     const startedAt = this.deps.now();
     this.cancelTick = this.deps.scheduler.every(250, () => {

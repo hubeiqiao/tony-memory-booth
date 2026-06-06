@@ -50,6 +50,7 @@ function fakes(mode: Mode) {
   const upload = { upload: vi.fn(() => uploadDone) };
   const capture = {
     startPreview: vi.fn(async () => {}),
+    showLive: vi.fn(),
     beginRecording: vi.fn(async () => {}),
     stopRecording: vi.fn(async () => result),
     metrics: () => ({ peakAudio: 0.5, maxLuma: 120 }),
@@ -104,7 +105,9 @@ describe("Controller (jsdom)", () => {
     const { deps, buffer, capture, sch } = fakes("booth");
     const c = new Controller(root, deps);
 
-    await c.act("begin"); // booth auto-requests permission
+    await c.act("begin"); // → permission screen
+    expect(c.getState()).toBe("permission");
+    await c.act("allow"); // Allow triggers the camera
     await flush();
     expect(c.getState()).toBe("ready");
     expect(capture.startPreview).toHaveBeenCalled();
@@ -165,6 +168,7 @@ describe("Controller (jsdom)", () => {
     nameInput.value = "Jane Doe";
 
     await c.act("begin");
+    await c.act("allow");
     await flush();
     await toRecording(c, f.sch);
     await c.act("stop");

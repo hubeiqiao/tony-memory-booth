@@ -8,9 +8,15 @@
   height: clamp(120px, 30vw, 180px);
   border-radius: 50%;
   object-fit: cover;
+  object-position: 50% 30%;
   border: 1px solid var(--rule);
-  box-shadow: 0 0 60px var(--glow);
-  filter: sepia(0.25) saturate(0.9) contrast(1.02);
+  box-shadow: var(--shadow);
+  /* the memorial's signature: monochrome, blooming to colour */
+  filter: grayscale(100%) contrast(1.08);
+  transition: filter 1.2s var(--ease);
+}
+.portrait:hover {
+  filter: grayscale(0%) contrast(1.02);
 }
 /* graceful placeholder when no portrait asset is provided */
 .portrait--placeholder {
@@ -91,11 +97,11 @@
 @keyframes recpulse {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(210, 162, 76, 0.5);
+    box-shadow: 0 0 0 0 rgba(211, 60, 60, 0.5);
     opacity: 0.85;
   }
   50% {
-    box-shadow: 0 0 0 10px rgba(210, 162, 76, 0);
+    box-shadow: 0 0 0 10px rgba(211, 60, 60, 0);
     opacity: 1;
   }
 }
