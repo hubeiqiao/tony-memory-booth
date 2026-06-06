@@ -125,7 +125,8 @@ class BrowserCapture implements CaptureService {
     video.src = URL.createObjectURL(blob);
   }
 
-  teardown(): void {
+  /** Stop camera + mic and metering immediately (keeps captured blob/metrics). */
+  releaseCamera(): void {
     try {
       if (this.recorder && this.recorder.state !== "inactive") this.recorder.stop();
     } catch {
@@ -139,6 +140,10 @@ class BrowserCapture implements CaptureService {
     this.stream?.getTracks().forEach((t) => t.stop());
     this.stream = null;
     this.recorder = null;
+  }
+
+  teardown(): void {
+    this.releaseCamera();
     this.chunks = [];
     this.peak.reset();
     this.luma.reset();

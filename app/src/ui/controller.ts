@@ -12,6 +12,8 @@ export interface CaptureService {
   showLive(video: HTMLVideoElement): void;
   beginRecording(onChunk: (seq: number, blob: Blob) => void): Promise<void>;
   stopRecording(): Promise<CaptureResult>;
+  /** Stop the camera + mic immediately (so the in-use indicator clears) without losing the recording. */
+  releaseCamera(): void;
   metrics(): { peakAudio: number; maxLuma: number };
   attachPlayback(video: HTMLVideoElement, blob: Blob): void;
   teardown(): void;
@@ -205,6 +207,7 @@ export class Controller {
     this.cur.result = result;
     this.cur.blob = result.blob;
     const m = this.deps.capture.metrics();
+    this.deps.capture.releaseCamera(); // free camera + mic now; review uses the recorded blob
     const sanity = checkRecording({
       durationMs: result.durationMs,
       sizeBytes: result.blob.size,

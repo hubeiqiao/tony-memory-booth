@@ -53,6 +53,7 @@ function fakes(mode: Mode) {
     showLive: vi.fn(),
     beginRecording: vi.fn(async () => {}),
     stopRecording: vi.fn(async () => result),
+    releaseCamera: vi.fn(),
     metrics: () => ({ peakAudio: 0.5, maxLuma: 120 }),
     attachPlayback: vi.fn(),
     teardown: vi.fn(),
