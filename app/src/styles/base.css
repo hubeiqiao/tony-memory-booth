@@ -143,6 +143,7 @@ body::after {
   color: var(--ink-soft);
   max-width: 34ch;
   margin: 0 auto;
+  text-wrap: balance;
 }
 .subtle {
   color: var(--muted);

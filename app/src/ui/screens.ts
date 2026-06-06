@@ -46,7 +46,7 @@ export function buildStage(root: HTMLElement, mode: Mode): ScreenRefs {
     <div class="stage">
       ${section(
         "welcome",
-        `<p class="eyebrow">In memory of Dr. Tony Bailetti · 1948–2026</p>
+        `<p class="eyebrow">In memory of <span class="nobr">Dr. Tony Bailetti</span> · <span class="nobr">1948–2026</span></p>
          <img class="portrait" src="/tony.jpg" alt="Dr. Tony Bailetti" onerror="this.classList.add('portrait--placeholder');this.removeAttribute('src');this.textContent='T'" />
          <p class="prompt">Share a memory of Tony.</p>
          <p class="lead">A few words for his family.</p>
