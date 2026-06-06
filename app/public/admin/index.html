@@ -10,9 +10,7 @@
       @font-face { font-family: "Newsreader"; font-weight: 600; font-display: swap; src: url("/fonts/newsreader-600-latin.woff2") format("woff2"); }
       @font-face { font-family: "Instrument Sans"; font-weight: 400; font-display: swap; src: url("/fonts/instrument-400-latin.woff2") format("woff2"); }
       @font-face { font-family: "Instrument Sans"; font-weight: 600; font-display: swap; src: url("/fonts/instrument-600-latin.woff2") format("woff2"); }
-      :root {
-        --bg:#0a0a0b; --elev:#161618; --ink:#f0ebe1; --soft:#8c857b; --accent:#d33c3c; --line:rgba(255,255,255,.1);
-      }
+      :root { --bg:#0a0a0b; --elev:#161618; --ink:#f0ebe1; --soft:#8c857b; --accent:#d33c3c; --line:rgba(255,255,255,.1); }
       * { box-sizing: border-box; }
       body { margin:0; background:var(--bg); color:var(--ink); font-family:"Instrument Sans",system-ui,sans-serif; line-height:1.5; }
       header { padding:48px 24px 24px; text-align:center; border-bottom:1px solid var(--line); }
@@ -40,7 +38,10 @@
     <script>
       const root = document.getElementById("root");
       const params = new URLSearchParams(location.search);
+      // Key is optional: when Cloudflare Access is configured, the family logs in
+      // via Access and no key is needed. The key is only a fallback gate.
       let key = params.get("key") || sessionStorage.getItem("mbAdminKey") || "";
+      const api = (p) => p + (key ? ((p.includes("?") ? "&" : "?") + "key=" + encodeURIComponent(key)) : "");
 
       const fmtTime = (ms) => new Date(ms).toLocaleString();
       const fmtDur = (ms) => { const s=Math.round((ms||0)/1000); return `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`; };
@@ -62,23 +63,19 @@
       }
 
       async function load() {
-        if (!key) return gate();
         root.innerHTML = `<div class="note">Loading…</div>`;
         let res;
-        try { res = await fetch(`/api/admin/recordings?key=${encodeURIComponent(key)}`); }
+        try { res = await fetch(api("/api/admin/recordings"), { credentials: "include" }); }
         catch { return gate("Couldn't connect. Try again."); }
-        if (res.status === 401) { sessionStorage.removeItem("mbAdminKey"); return gate("That key didn't work. Please try again."); }
+        if (res.status === 401) { sessionStorage.removeItem("mbAdminKey"); key=""; return gate("Sign in required, or enter the family access key."); }
+        if (!res.ok) return gate("Something went wrong. Please try again.");
         const { recordings } = await res.json();
         const done = recordings.filter(r => r.status === "complete").sort((a,b)=>b.receivedAt-a.receivedAt);
-        sessionStorage.setItem("mbAdminKey", key);
+        if (key) sessionStorage.setItem("mbAdminKey", key);
 
-        // pull contact details (meta.json) for any recordings that have them
         await Promise.all(done.map(async r => {
           if (!r.hasContact) return;
-          try {
-            const m = await fetch(`/api/admin/recordings/${r.id}/meta?key=${encodeURIComponent(key)}`);
-            if (m.ok) r.contact = (await m.json()).contact || null;
-          } catch { /* ignore */ }
+          try { const m = await fetch(api(`/api/admin/recordings/${r.id}/meta`), { credentials:"include" }); if (m.ok) r.contact = (await m.json()).contact || null; } catch {}
         }));
 
         const head = `<header>
@@ -93,18 +90,16 @@
         if (!done.length) { root.innerHTML = head + `<main><p class="empty">No messages yet.</p></main>`; wire(done); return; }
 
         const cards = done.map(r => {
-          const media = `/api/admin/recordings/${r.id}/media?key=${encodeURIComponent(key)}`;
-          const dl = `/api/admin/recordings/${r.id}/download?key=${encodeURIComponent(key)}`;
           const c = r.contact || {};
           const bits = [c.name, c.email, c.phone].filter(Boolean).map(esc).join(" · ");
           const contact = bits ? `<div class="contact">${bits}</div>` : "";
           return `<div class="card">
-            <video controls preload="metadata" src="${media}"></video>
+            <video controls preload="metadata" src="${api(`/api/admin/recordings/${r.id}/media`)}"></video>
             <div class="meta">
               <div class="name">${esc(new Date(r.receivedAt).toLocaleDateString())} · ${fmtDur(r.durationMs)}</div>
               <div class="row">${esc(fmtTime(r.receivedAt))} · ${esc(r.mode)}</div>
               ${contact}
-              <a class="dl" href="${dl}">Download</a>
+              <a class="dl" href="${api(`/api/admin/recordings/${r.id}/download`)}">Download</a>
               <a class="dl" href="#" data-del="${r.id}" style="color:var(--soft);margin-left:14px">Remove</a>
             </div>
           </div>`;
@@ -117,13 +112,12 @@
         document.querySelectorAll("[data-del]").forEach(el => el.onclick = async (e) => {
           e.preventDefault();
           if (!confirm("Remove this message permanently? This cannot be undone.")) return;
-          const id = el.getAttribute("data-del");
-          await fetch(`/api/admin/recordings/${id}?key=${encodeURIComponent(key)}`, { method: "DELETE" });
+          await fetch(api(`/api/admin/recordings/${el.getAttribute("data-del")}`), { method:"DELETE", credentials:"include" });
           load();
         });
         const all = document.getElementById("all");
         if (all) all.onclick = (e) => { e.preventDefault(); done.forEach((r,i)=>setTimeout(()=>{
-          const a=document.createElement("a"); a.href=`/api/admin/recordings/${r.id}/download?key=${encodeURIComponent(key)}`; a.download=""; document.body.appendChild(a); a.click(); a.remove();
+          const a=document.createElement("a"); a.href=api(`/api/admin/recordings/${r.id}/download`); a.download=""; document.body.appendChild(a); a.click(); a.remove();
         }, i*800)); };
         const csv = document.getElementById("csv");
         if (csv) csv.onclick = (e) => { e.preventDefault();
