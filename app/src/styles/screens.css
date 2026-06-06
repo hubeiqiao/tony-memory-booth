@@ -175,6 +175,30 @@
   border: 0;
 }
 
+/* ---- Formal eyebrow + memorial link ---- */
+.eyebrow {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.memorial-link {
+  margin: 0;
+  font-size: 0.85rem;
+}
+.memorial-link a {
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 1px;
+  transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+.memorial-link a:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
 /* ---- Turnstile (phone) ---- */
 .turnstile {
   display: flex;

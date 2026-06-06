@@ -46,10 +46,12 @@ export function buildStage(root: HTMLElement, mode: Mode): ScreenRefs {
     <div class="stage">
       ${section(
         "welcome",
-        `<img class="portrait" src="/tony.jpg" alt="Professor Tony Bailetti" onerror="this.classList.add('portrait--placeholder');this.removeAttribute('src');this.textContent='T'" />
+        `<p class="eyebrow">In memory of Dr. Tony Bailetti · 1948–2026</p>
+         <img class="portrait" src="/tony.jpg" alt="Dr. Tony Bailetti" onerror="this.classList.add('portrait--placeholder');this.removeAttribute('src');this.textContent='T'" />
          <p class="prompt">Share a memory of Tony.</p>
          <p class="lead">A few words for his family.</p>
-         <div class="controls"><button class="btn btn--primary btn--lg" data-action="begin">${begin}</button></div>`
+         <div class="controls"><button class="btn btn--primary btn--lg" data-action="begin">${begin}</button></div>
+         <p class="memorial-link"><a href="https://sprott.carleton.ca/2026/in-memoriam-tony-bailetti/" target="_blank" rel="noopener noreferrer">Read his memorial ↗</a></p>`
       )}
       ${section(
         "permission",
@@ -116,7 +118,8 @@ export function buildStage(root: HTMLElement, mode: Mode): ScreenRefs {
         "thankyou",
         `<div class="bloom" aria-hidden="true"></div>
          <p class="prompt">Thank you for sharing.</p>
-         ${mode === "booth" ? `<div class="controls"><button class="btn" data-action="reset">Done</button></div>` : `<p class="lead">You can close this when you're ready.</p><div class="controls"><button class="btn" data-action="reset">Record another</button></div>`}`
+         ${mode === "booth" ? `<div class="controls"><button class="btn" data-action="reset">Done</button></div>` : `<p class="lead">You can close this when you're ready.</p><div class="controls"><button class="btn" data-action="reset">Record another</button></div>`}
+         <p class="memorial-link"><a href="https://sprott.carleton.ca/2026/in-memoriam-tony-bailetti/" target="_blank" rel="noopener noreferrer">In memory of Dr. Tony Bailetti ↗</a></p>`
       )}
       ${section(
         "denied",
