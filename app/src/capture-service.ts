@@ -126,8 +126,38 @@ class BrowserCapture implements CaptureService {
   }
 
   attachPlayback(video: HTMLVideoElement, blob: Blob): void {
+    if (video.src) {
+      try {
+        URL.revokeObjectURL(video.src);
+      } catch {
+        /* ignore */
+      }
+    }
     video.srcObject = null;
     video.src = URL.createObjectURL(blob);
+    // MediaRecorder WebM (desktop Chrome/Firefox) ships without duration metadata,
+    // so video.duration reads as Infinity and the scrubber/total time never fills
+    // in. Force the browser to compute the real duration by seeking past the end
+    // once, then snap back to the start. (iOS records mp4, which already has it.)
+    const onMeta = () => {
+      if (!Number.isFinite(video.duration)) {
+        const onSeek = () => {
+          video.removeEventListener("timeupdate", onSeek);
+          try {
+            video.currentTime = 0;
+          } catch {
+            /* ignore */
+          }
+        };
+        video.addEventListener("timeupdate", onSeek);
+        try {
+          video.currentTime = 1e7; // clamps to the true end, emitting the real duration
+        } catch {
+          /* ignore */
+        }
+      }
+    };
+    video.addEventListener("loadedmetadata", onMeta, { once: true });
   }
 
   /** Stop camera + mic and metering immediately (keeps captured blob/metrics). */

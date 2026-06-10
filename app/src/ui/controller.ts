@@ -100,6 +100,16 @@ export class Controller {
     for (const [k, el] of Object.entries(this.refs.screens)) {
       el?.classList.toggle("is-active", k === key);
     }
+    // Stop the review playback the moment we leave the review screen, so a
+    // message a guest pressed play on never keeps playing (audio + video) on
+    // the contact/saving/thank-you screens or after they start a new one.
+    if (this.state !== "review" && this.refs.reviewVideo) {
+      try {
+        this.refs.reviewVideo.pause();
+      } catch {
+        /* no media in test env */
+      }
+    }
     if (this.deps.mode === "booth" && this.refs.attendant) {
       this.refs.attendant.textContent =
         this.state === "thankyou" ? "Attendant: tap Done when the guest is ready." : "";
@@ -297,6 +307,18 @@ export class Controller {
 
   private reset(): void {
     this.deps.capture.teardown();
+    // fully stop & release the review playback (frees the object URL)
+    try {
+      const rv = this.refs.reviewVideo;
+      rv?.pause();
+      if (rv?.src) {
+        URL.revokeObjectURL(rv.src);
+        rv.removeAttribute("src");
+        rv.load();
+      }
+    } catch {
+      /* no media in test env */
+    }
     // clear any contact PII so nothing lingers for the next guest (§4)
     if (this.refs.contact.name) this.refs.contact.name.value = "";
     if (this.refs.contact.email) this.refs.contact.email.value = "";

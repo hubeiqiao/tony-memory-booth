@@ -64,7 +64,7 @@ export function buildStage(root: HTMLElement, mode: Mode): ScreenRefs {
         "ready",
         `<div class="preview-frame"><video data-ref="preview" muted playsinline></video></div>
          <p class="lead">When you're ready.</p>
-         <p class="subtle">If you're not sure where to start — how you met him, a moment he believed in you, or something he taught you that stayed.</p>
+         <p class="subtle">If you're not sure where to start — how you met him, a moment he believed in you, or something <span class="nobr">he taught you that stayed.</span></p>
          <div class="controls">
            <button class="btn" data-action="back">Back</button>
            <button class="btn btn--primary" data-action="start">Start recording</button>
